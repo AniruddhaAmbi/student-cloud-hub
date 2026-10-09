@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .forgot-password-link a:last-child {
+      color: #27ae60;
+      font-weight: 600;
+    }
+    .forgot-password-link a:last-child:hover {
+      text-decoration: underline;
+      color: #1e8449;
+    }
+
+    .registration-modal {
+      max-width: 450px !important;
+    }
+    
+    .registration-modal h2 {
+      color: #1a1a2e;
+      margin-bottom: 5px;
+    }
+
+    .registration-modal input,
+    .registration-modal select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: border-color 0.3s;
+    }
+
+    .registration-modal input:focus,
+    .registration-modal select:focus {
+      outline: none;
+      border-color: #4a6fa5;
+      background: #f0f4ff;
+    }
+
+    .registration-message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      font-size: 13px;
+      display: none;
+    }
+
+    .registration-message.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+      border-left: 4px solid #155724;
+    }
+
+    .registration-message.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+      border-left: 4px solid #721c24;
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated background clouds and UML diagrams -->
+  <div class="background-container">
+    <!-- UML Diagram - Computer Node - Top Right -->
+    <div class="uml-element uml-computer-1">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="8" width="44" height="32" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" rx="3"/>
+        <rect x="12" y="12" width="36" height="24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="0.8"/>
+        <line x1="20" y1="42" x2="40" y2="42" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+        <line x1="25" y1="42" x2="35" y2="50" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+        <text x="30" y="30" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="8" font-weight="bold">PC</text>
+      </svg>
+    </div>
+    
+    <!-- Cloud 1 -->
+    <svg class="cloud cloud-1" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="35" r="15" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="40" cy="25" r="20" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="60" cy="30" r="18" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="80" cy="35" r="16" fill="rgba(255,255,255,0.1)"/>
+    </svg>
+    
+    <!-- Cloud 2 -->
+    <svg class="cloud cloud-2" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="35" r="15" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="40" cy="25" r="20" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="60" cy="30" r="18" fill="rgba(255,255,255,0.1)"/>
+      <circle cx="80" cy="35" r="16" fill="rgba(255,255,255,0.1)"/>
+    </svg>
+    
+    <!-- Cloud 3 -->
+    <svg class="cloud cloud-3" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="35" r="15" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="40" cy="25" r="20" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="60" cy="30" r="18" fill="rgba(255,255,255,0.08)"/>
+      <circle cx="80" cy="35" r="16" fill="rgba(255,255,255,0.08)"/>
+    </svg>
+
+    <!-- UML Diagram - Database Node -->
+    <div class="uml-element uml-db-1">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="15" r="12" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+        <text x="30" y="18" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-weight="bold">DB</text>
+      </svg>
+    </div>
+
+    <!-- UML Diagram - Server Node -->
+    <div class="uml-element uml-server-1">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="40" height="40" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2" rx="5"/>
+        <text x="30" y="33" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="10" font-weight="bold">Server</text>
+      </svg>
+    </div>
+
+    <!-- UML Diagram - Cloud Node -->
+    <div class="uml-element uml-cloud-1">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 15 35 Q 10 35 10 30 Q 10 20 20 20 Q 25 10 35 10 Q 50 10 50 20 Q 55 20 55 30 Q 55 35 50 35 Z" 
+              fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.2"/>
+        <text x="30" y="33" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="8" font-weight="bold">Cloud</text>
+      </svg>
+    </div>
+    
+  </div>
+
+  <marquee behavior="scroll" direction="left" class="page-marquee">Cloud&nbsp;&nbsp;&nbsp;Computing&nbsp;&nbsp;&nbsp;CLOUD&nbsp;&nbsp;&nbsp;COMPUTING</marquee>
+
+  <div class="card">
+    <div class="storage-badge">
+      <span class="storage-icon">☁</span>
+      <span>Cloud Storage</span>
+    </div>
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    
+    <div class="forgot-password-link">
+      <a href="#" onclick="showForgotPassword(event)">Forgot Password?</a>
+      <a href="#" onclick="showRegistration(event)" style="margin-left: 15px;">Create New Account</a>
+    </div>
+    
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Registration Modal -->
+  <div id="registrationModal" class="modal">
+    <div class="modal-content registration-modal">
+      <span class="close" onclick="closeRegistration()">&times;</span>
+      <h2>Create New Account</h2>
+      <p style="color: #666; margin-bottom: 20px;">Join Student Cloud Hub Today</p>
+      
+      <input type="text" id="regName" placeholder="Full Name" required>
+      <input type="email" id="regEmail" placeholder="Email Address" required>
+      <input type="password" id="regPassword" placeholder="Password (min 6 characters)" required>
+      <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+      
+      <select id="regCourse" required>
+        <option value="">-- Select Your Course --</option>
+        <option value="Computer Science">Computer Science</option>
+        <option value="Information Technology">Information Technology</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Business Administration">Business Administration</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Web Development">Web Development</option>
+        <option value="Mobile Development">Mobile Development</option>
+      </select>
+      
+      <button onclick="registerAccount()" style="width: 100%; margin-top: 15px;">Create Account</button>
+      <p class="registration-message" id="registrationMessage"></p>
+      
+      <p style="text-align: center; margin-top: 15px; font-size: 13px; color: #666;">
+        Already have an account? <a href="#" onclick="closeRegistration(); event.preventDefault();" style="color: #4a6fa5; text-decoration: none; font-weight: 600;">Login here</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeForgotPassword()">&times;</span>
+      <h2>Reset Password</h2>
+      <p>Enter your email address and we'll send you a link to reset your password.</p>
+      <input type="email" id="resetEmail" placeholder="Enter your email">
+      <button onclick="sendResetLink()">Send Reset Link</button>
+      <p class="reset-message" id="resetMessage"></p>
+    </div>
+  </div>
+
+<script>
+async function login() {
+  const res = await fetch("/login", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+
+  const data = await res.json();
+  localStorage.setItem("token", data.token);
+  window.location.href = "dashboard.html";
+}
+
+function showForgotPassword(event) {
+  event.preventDefault();
+  document.getElementById("forgotPasswordModal").style.display = "block";
+}
+
+function closeForgotPassword() {
+  document.getElementById("forgotPasswordModal").style.display = "none";
+  document.getElementById("resetMessage").textContent = "";
+  document.getElementById("resetEmail").value = "";
+}
+
+function showRegistration(event) {
+  event.preventDefault();
+  document.getElementById("registrationModal").style.display = "block";
+}
+
+function closeRegistration() {
+  document.getElementById("registrationModal").style.display = "none";
+  clearRegistrationForm();
+}
+
+function clearRegistrationForm() {
+  document.getElementById("regName").value = "";
+  document.getElementById("regEmail").value = "";
+  document.getElementById("regPassword").value = "";
+  document.getElementById("regConfirmPassword").value = "";
+  document.getElementById("regCourse").value = "";
+  document.getElementById("registrationMessage").textContent = "";
+  document.getElementById("registrationMessage").className = "registration-message";
+}
+
+async function registerAccount() {
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim();
+  const password = document.getElementById("regPassword").value;
+  const confirmPassword = document.getElementById("regConfirmPassword").value;
+  const course = document.getElementById("regCourse").value;
+  const messageElement = document.getElementById("registrationMessage");
+
+  // Validation
+  if (!name || !email || !password || !confirmPassword || !course) {
+    messageElement.textContent = "❌ Please fill in all fields";
+    messageElement.className = "registration-message error";
+    return;
+  }
+
+  if (password.length < 6) {
+    messageElement.textContent = "❌ Password must be at least 6 characters long";
+    messageElement.className = "registration-message error";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    messageElement.textContent = "❌ Passwords do not match";
+    messageElement.className = "registration-message error";
+    return;
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    messageElement.textContent = "❌ Please enter a valid email address";
+    messageElement.className = "registration-message error";
+    return;
+  }
+
+  try {
+    const res = await fetch("/register", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password,
+        course: course
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      messageElement.textContent = "✅ Account created successfully! Redirecting to login...";
+      messageElement.className = "registration-message success";
+      setTimeout(() => {
+        closeRegistration();
+        // Optionally auto-fill email in login form
+        document.getElementById("email").value = email;
+        document.getElementById("email").focus();
+      }, 1500);
+    } else {
+      messageElement.textContent = "❌ " + (data.message || "Registration failed. Email may already exist.");
+      messageElement.className = "registration-message error";
+    }
+  } catch (error) {
+    messageElement.textContent = "❌ Connection error. Please try again.";
+    messageElement.className = "registration-message error";
+    console.error(error);
+  }
+}
+
+async function sendResetLink() {
+  const email = document.getElementById("resetEmail").value;
+  const messageElement = document.getElementById("resetMessage");
+  
+  if (!email) {
+    messageElement.textContent = "Please enter your email address";
+    messageElement.style.color = "#e74c3c";
+    return;
+  }
+
+  try {
+    const res = await fetch("/forgot-password", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ email: email })
+    });
+
+    const data = await res.json();
+    
+    if (res.ok) {
+      messageElement.textContent = "Reset link sent successfully! Check your email.";
+      messageElement.style.color = "#27ae60";
+      setTimeout(() => closeForgotPassword(), 2000);
+    } else {
+      messageElement.textContent = data.message || "Error sending reset link";
+      messageElement.style.color = "#e74c3c";
+    }
+  } catch (error) {
+    messageElement.textContent = "Connection error. Please try again.";
+    messageElement.style.color = "#e74c3c";
+  }
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+  const forgotModal = document.getElementById("forgotPasswordModal");
+  const regModal = document.getElementById("registrationModal");
+  
+  if (event.target == forgotModal) {
+    forgotModal.style.display = "none";
+  }
+  if (event.target == regModal) {
+    regModal.style.display = "none";
+  }
+}
+</script>
+</body>
+</html>

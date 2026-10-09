@@ -1,0 +1,468 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Smooth animated gradient background */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(-45deg, #1a1a2e, #87ceeb, #ff69b4, #4a6fa5);
+  background-size: 400% 400%;
+  animation: gradientShift 9s ease infinite;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Background container for clouds and UML diagrams */
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Background Image - Top Right Corner */
+.uml-computer-1 {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 400px;
+  height: 400px;
+  z-index: 2;
+  animation: pulse 6s ease-in-out infinite;
+}
+
+/* Animated clouds */
+.cloud {
+  position: absolute;
+  opacity: 0.3;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.cloud-1 {
+  width: 200px;
+  height: 120px;
+  top: 10%;
+  left: 5%;
+  animation: float 19s ease-in-out infinite;
+}
+
+.cloud-2 {
+  width: 250px;
+  height: 150px;
+  top: 60%;
+  right: 10%;
+  animation: float 24s ease-in-out infinite reverse;
+}
+
+.cloud-3 {
+  width: 220px;
+  height: 135px;
+  bottom: 15%;
+  left: 15%;
+  animation: float 29s ease-in-out infinite;
+}
+
+/* Float animation for clouds */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-20px) translateX(30px);
+  }
+  50% {
+    transform: translateY(-40px) translateX(0px);
+  }
+  75% {
+    transform: translateY(-20px) translateX(-30px);
+  }
+}
+
+/* UML Elements */
+.uml-element {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.uml-db-1 {
+  top: 20%;
+  left: 10%;
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.uml-server-1 {
+  bottom: 15%;
+  right: 12%;
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.uml-cloud-1 {
+  top: 40%;
+  left: 5%;
+  width: 400px;
+  height: 400px;
+  animation: pulse 5s ease-in-out infinite;
+}
+
+/* Pulse animation for UML elements */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+}
+
+/* Connection lines animation */
+.connection-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  animation: dashAnimation 9s linear infinite;
+}
+
+@keyframes dashAnimation {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: 10;
+  }
+}
+
+/* Smooth gradient animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Login card with smooth styling */
+.card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 100%), url('https://img.magnific.com/free-vector/cloud-computing-futuristic-background-internet-connectivity_1017-57910.jpg?semt=ais_hybrid&w=740&q=80') center/400px 400px no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 400px;
+  backdrop-filter: blur(5px);
+  animation: slideIn 0.8s ease-out;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+  opacity: 0.95;
+}
+
+.storage-badge {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1a1a2e;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  backdrop-filter: blur(10px);
+}
+
+.page-marquee {
+  position: absolute;
+  top: 20px;
+  left: 40px;
+  width: auto;
+  max-width: 280px;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px);
+  opacity: 0.95;
+  z-index: 12;
+}
+
+.storage-icon {
+  font-size: 16px;
+  color: #ff69b4;
+}
+
+.card:hover {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+  transform: translateY(-5px);
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Title styling */
+.card h2 {
+  color: #ffffff;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Input fields */
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 2px solid #333;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  backdrop-filter: blur(5px);
+}
+
+input:focus {
+  border-color: #23a6d5;
+  box-shadow: 0 0 15px rgba(35, 166, 213, 0.5);
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.5);
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+/* Button styling */
+button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #23a6d5, #23d5ab);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(35, 166, 213, 0.4);
+}
+
+button:active {
+  transform: translateY(-1px);
+}
+
+/* Forgot Password Link */
+.forgot-password-link {
+  text-align: right;
+  margin-bottom: 20px;
+  margin-top: -5px;
+}
+
+.forgot-password-link a {
+  color: #23a6d5;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.forgot-password-link a:hover {
+  color: #23d5ab;
+  text-decoration: underline;
+}
+
+/* Modal Styling */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  margin: 5% auto;
+  padding: 30px;
+  border-radius: 15px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  animation: slideInModal 0.4s ease-out;
+  position: relative;
+}
+
+@keyframes slideInModal {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close {
+  color: #999;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close:hover {
+  color: #333;
+}
+
+.modal-content h2 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.modal-content p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.modal-content input:focus {
+  border-color: #23a6d5;
+  box-shadow: 0 0 10px rgba(35, 166, 213, 0.2);
+}
+
+.modal-content button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #23a6d5, #23d5ab);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.modal-content button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(35, 166, 213, 0.4);
+}
+
+.reset-message {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  min-height: 20px;
+}
+
+/* Smooth loading state */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .card {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+
+  .card h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  input,
+  button {
+    padding: 12px;
+    font-size: 16px;
+  }
+}

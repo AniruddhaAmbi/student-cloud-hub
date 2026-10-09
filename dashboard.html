@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Student Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{--bg:#f5f7fb;--card:#fff;--muted:#6b7280}
+    html,body{height:100%;margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg)}
+    .wrap{max-width:960px;margin:32px auto;padding:20px 14px 20px 10px}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .title{font-size:20px;color:#1f2937}
+    .title .accent{color:#2563eb;font-weight:700}
+    .title .accent::first-letter{font-size:2em;font-weight:900;line-height:0.85}
+    .greeting{color:#374151;font-weight:400}
+    .greeting .greeting-accent{color:#dc2626;font-weight:700}
+    .card{background:var(--card);border-radius:10px;padding:18px;margin-top:16px;box-shadow:0 8px 24px rgba(16,24,40,0.06)}
+    .upload-card{padding:20px 22px; display:grid; gap:14px;}
+    .upload-summary{display:grid; gap:6px;}
+    .upload-title{font-size:18px;color:#111827;font-weight:700}
+    .upload-description{font-size:14px;color:#4b5563;line-height:1.5}
+    .upload-zone{border:2px dashed #60a5fa;border-radius:14px;padding:24px;display:flex;align-items:center;justify-content:center;gap:14px;background:#eff6ff;color:#1d4ed8;cursor:pointer;transition:all .2s ease}
+    .upload-zone:hover,.upload-zone.dragover{border-color:#2563eb;background:#dbeafe;box-shadow:0 0 0 4px rgba(37,99,235,0.12)}
+    .upload-icon{font-size:32px}
+    .upload-text strong{display:block;font-size:16px;margin-bottom:4px}
+    .upload-hint{font-size:13px;color:var(--muted)}
+    .upload-actions{justify-content:flex-start}
+    .uploader{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .uploader input[type=file]{display:block}
+    .controls{display:flex;gap:8px;align-items:center}
+    .file-list{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .file-item{border:1px solid #e6eef8;border-radius:8px;padding:10px;background:#fcfeff;display:flex;flex-direction:column;gap:8px}
+    .file-meta{font-size:13px;color:var(--muted)}
+    .btn{padding:8px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;cursor:pointer}
+    .primary{background:#2563eb;color:#fff;border-color:transparent}
+    .small{font-size:13px;padding:6px 8px}
+    video,img,audio{max-width:100%;border-radius:6px}
+    .type-select{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+    .type-select label{font-size:13px;color:var(--muted)}
+    .folders{display:flex;gap:12px;margin-top:12px;align-items:flex-start}
+    .folders .sidebar{min-width:220px;display:grid;gap:12px}
+    .filter-panel, .folders .folder-list{border-radius:8px;padding:14px;background:#fff;border:1px solid #e6eef8}
+    .filter-panel h4, .folders .folder-list h4{margin:0 0 10px 0;font-size:14px}
+    .filter-list{display:grid;gap:8px}
+    .filter-item{padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;justify-content:space-between;background:#f9fafb;color:#374151}
+    .filter-item:hover{background:#eff6ff;border-color:#93c5fd}
+    .filter-item.selected{background:#eff6ff;border-color:#3b82f6;color:#1d4ed8}
+    .folders .folder-item{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-radius:4px}
+    .folders .folder-item.selected{background:#eef2ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <div class="title"><span class="accent">Student</span> Dashboard ;</div>
+        <div class="greeting"><span class="greeting-accent">Hellow</span>, welcome to your cloud storage</div>
+      </div>
+    </div>
+
+    <div class="card upload-card">
+      <div class="upload-summary">
+        <div class="upload-title">Upload files with ease</div>
+        <div class="upload-description">Drag files into the box or click Choose Files. Uploaded files are stored in this project's temp_storage folder and remain available after restarting the server.</div>
+      </div>
+      <div id="uploadZone" class="upload-zone" tabindex="0">
+        <div class="upload-icon">📁</div>
+        <div class="upload-text">
+          <strong>Drop files here</strong>
+          <div class="upload-hint">Images, audio, video, documents, and other file types are supported.</div>
+        </div>
+      </div>
+      <div class="controls upload-actions">
+        <label class="btn small primary" for="fileInput">Choose Files</label>
+        <input id="fileInput" type="file" multiple style="display:none">
+        <button id="clearAll" class="btn small">Clear All</button>
+      </div>
+    </div>
+
+    <div class="type-select card">
+      <div style="font-weight:600;margin-right:8px">Select upload type:</div>
+      <label><input type="radio" name="uploadType" value="all" id="typeAll"> All files</label>
+      <label><input type="radio" name="uploadType" value="images" id="typeImages"> Images only</label>
+      <label><input type="radio" name="uploadType" value="audio" id="typeAudio"> Audio only</label>
+      <label><input type="radio" name="uploadType" value="video" id="typeVideo"> Video only</label>
+      <label><input type="radio" name="uploadType" value="documents" id="typeDocs"> Documents only</label>
+      <label><input type="radio" name="uploadType" value="others" id="typeOthers"> Other files</label>
+      <div style="margin-left:auto;font-size:13px;color:var(--muted)">Selection persists in browser</div>
+    </div>
+
+    <div class="folders">
+      <div class="sidebar">
+        <div class="filter-panel card">
+          <h4>View by type</h4>
+          <div class="filter-list" id="typeFilterList"></div>
+        </div>
+        <div class="folder-list card">
+          <h4>Folders</h4>
+          <div id="folderListUI">
+            <div class="folder-item selected" data-id="all">All Files <button class="btn small" data-action="refresh">⟳</button></div>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <input id="newFolderName" placeholder="New folder name" style="flex:1;padding:6px;border:1px solid #e6eef8;border-radius:6px">
+            <button id="createFolder" class="btn small primary">Create</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex:1">
+        <div class="card">
+          <div>
+            <strong>Stored Files</strong>
+            <div id="summary" class="file-meta" style="margin-top:8px;margin-bottom:8px">Calculating...</div>
+            <div class="file-list" id="fileList">Loading…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // IndexedDB helper (simple)
+    const DB_NAME = 'studentCloudDB';
+    const LEGACY_STORE_NAME = 'files';
+    const FOLDER_STORE = 'folders';
+    let db;
+    let selectedFolderId = 'all';
+    let selectedTypeFilter = 'all';
+
+    async function fileApi(url, options){
+      const response = await fetch(url, options);
+      if(!response.ok){
+        const message = await response.text();
+        throw new Error(message || 'File storage request failed (' + response.status + ')');
+      }
+      if(response.status === 204) return null;
+      return response.json();
+    }
+
+    function openDB(){
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, 1);
+        req.onupgradeneeded = e => {
+          const d = e.target.result;
+          if(!d.objectStoreNames.contains(FOLDER_STORE)){
+            d.createObjectStore(FOLDER_STORE, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        req.onsuccess = e => { db = e.target.result; resolve(db); };
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    function addFile(file, folderId, importKey){
+      if(folderId === undefined) folderId = selectedFolderId === 'all' ? null : selectedFolderId;
+      const headers = {
+        'Content-Type': 'application/octet-stream',
+        'X-File-Name': encodeURIComponent(file.name),
+        'X-File-Type': file.type || 'application/octet-stream'
+      };
+      if(folderId !== null) headers['X-Folder-Id'] = String(folderId);
+      if(importKey) headers['X-Import-Key'] = importKey;
+      return fileApi('/api/files', { method: 'POST', headers, body: file });
+    }
+
+    function getLegacyFiles(){
+      if(!db.objectStoreNames.contains(LEGACY_STORE_NAME)) return Promise.resolve([]);
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(LEGACY_STORE_NAME, 'readonly');
+        const req = tx.objectStore(LEGACY_STORE_NAME).getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    function deleteLegacyFile(id){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(LEGACY_STORE_NAME, 'readwrite');
+        const req = tx.objectStore(LEGACY_STORE_NAME).delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    async function migrateLegacyFiles(){
+      const legacyFiles = await getLegacyFiles();
+      if(legacyFiles.length === 0) return;
+
+      let migrationId = localStorage.getItem('fileStorageMigrationId');
+      if(!migrationId){
+        migrationId = crypto.randomUUID();
+        localStorage.setItem('fileStorageMigrationId', migrationId);
+      }
+
+      for(const record of legacyFiles){
+        if(!record.file || typeof record.file.size !== 'number'){
+          throw new Error('An older browser-stored file could not be read');
+        }
+        const fileName = record.name || record.file.name || 'upload';
+        const file = new File([record.file], fileName, { type: record.type || record.file.type });
+        await addFile(file, record.folderId === undefined ? null : record.folderId, migrationId + ':' + record.id);
+        await deleteLegacyFile(record.id);
+      }
+    }
+
+    // Folder store helpers
+    function addFolder(name){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FOLDER_STORE, 'readwrite');
+        const store = tx.objectStore(FOLDER_STORE);
+        const req = store.add({ name: name, date: Date.now() });
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    function getAllFolders(){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FOLDER_STORE, 'readonly');
+        const store = tx.objectStore(FOLDER_STORE);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    function deleteFolder(id){
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(FOLDER_STORE, 'readwrite');
+        const store = tx.objectStore(FOLDER_STORE);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = e => reject(e.target.error);
+      });
+    }
+
+    function updateFile(record){
+      return fileApi('/api/files/' + encodeURIComponent(record.id), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folderId: record.folderId })
+      });
+    }
+
+    function deleteFilesInFolder(folderId){
+      return getAllFiles().then(files => Promise.all(
+        files.filter(file => String(file.folderId) === String(folderId))
+          .map(file => deleteFile(file.id))
+      ));
+    }
+
+    function getAllFiles(){
+      return fileApi('/api/files');
+    }
+
+    function deleteFile(id){
+      return fileApi('/api/files/' + encodeURIComponent(id), { method: 'DELETE' });
+    }
+
+    function clearAll(){
+      return fileApi('/api/files', { method: 'DELETE' });
+    }
+
+    // Render list
+    async function renderList(){
+      const list = document.getElementById('fileList');
+      let items;
+      try{
+        items = await getAllFiles();
+      }catch(err){
+        list.textContent = 'Failed to load stored files: ' + err.message + '. Open the dashboard at http://localhost:3000 while the server is running.';
+        document.getElementById('summary').textContent = 'File storage unavailable.';
+        return;
+      }
+      list.innerHTML = '';
+      updateSummary(items);
+      // filter by selectedFolderId
+      const folderFiltered = (selectedFolderId === 'all') ? items : items.filter(it => String(it.folderId) === String(selectedFolderId));
+      const filtered = folderFiltered.filter(it => {
+        if(selectedTypeFilter === 'all') return true;
+        const t = (it.type||'').toLowerCase();
+        if(selectedTypeFilter === 'images') return t.startsWith('image/');
+        if(selectedTypeFilter === 'audio') return t.startsWith('audio/');
+        if(selectedTypeFilter === 'video') return t.startsWith('video/');
+        if(selectedTypeFilter === 'documents') return t === 'application/pdf' || t.includes('word') || t.includes('officedocument') || t === 'text/plain' || it.name.match(/\.(pdf|docx?|txt|xlsx?|pptx?)$/i);
+        if(selectedTypeFilter === 'others') return !(t.startsWith('image/') || t.startsWith('audio/') || t.startsWith('video/') || t === 'application/pdf' || t.includes('word') || t.includes('officedocument') || t === 'text/plain' || it.name.match(/\.(pdf|docx?|txt|xlsx?|pptx?)$/i));
+        return true;
+      });
+      if(!filtered || filtered.length === 0){ list.innerHTML = '<div class="file-meta">No files stored.</div>'; return; }
+
+      const folders = await getAllFolders();
+      const folderMap = {};
+      folders.forEach(f => folderMap[f.id] = f.name);
+
+      filtered.reverse().forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'file-item';
+
+        const meta = document.createElement('div');
+        meta.className = 'file-meta';
+        const folderLabel = item.folderId ? (' [' + (folderMap[item.folderId] || 'Folder') + ']') : '';
+        meta.textContent = item.name + folderLabel + ' • ' + formatBytes(item.size);
+
+        const preview = document.createElement('div');
+
+        const url = item.contentUrl;
+        if(item.type.startsWith('image/')){
+          const img = document.createElement('img'); img.src = url; img.alt = item.name; preview.appendChild(img);
+        } else if(item.type.startsWith('audio/')){
+          const a = document.createElement('audio'); a.controls = true; a.src = url; preview.appendChild(a);
+        } else if(item.type.startsWith('video/')){
+          const v = document.createElement('video'); v.controls = true; v.src = url; preview.appendChild(v);
+        } else {
+          const p = document.createElement('div'); p.textContent = '📄 ' + item.name; preview.appendChild(p);
+        }
+
+        const actions = document.createElement('div');
+        actions.style.display = 'flex'; actions.style.gap = '8px'; actions.style.justifyContent = 'flex-end';
+
+        const dl = document.createElement('button'); dl.className='btn small'; dl.textContent='Download';
+        dl.onclick = () => {
+          const link = document.createElement('a');
+          link.href = item.contentUrl + '?download=1';
+          link.download = item.name;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        };
+
+        const moveBtn = document.createElement('button'); moveBtn.className='btn small'; moveBtn.textContent='Move';
+        moveBtn.onclick = async () => {
+          const folders = await getAllFolders();
+          const names = folders.map(f => f.name).join(', ');
+          const choice = prompt('Move to which folder? Available: ' + (names || '[none]') + '\nType exact folder name or leave blank for All');
+          if(choice === null) return;
+          let target = folders.find(f => f.name === choice);
+          let newFolderId = null;
+          if(target) newFolderId = target.id;
+          else if(choice.trim() === '') newFolderId = null;
+          else if(choice.trim() !== ''){
+            // create new folder
+            const id = await addFolder(choice.trim());
+            newFolderId = id;
+            renderFolders();
+          }
+          try{
+            const rec = Object.assign({}, item, { folderId: newFolderId });
+            await updateFile(rec);
+            renderList();
+          }catch(err){
+            alert('Failed to move file: ' + err.message);
+          }
+        };
+
+        const del = document.createElement('button'); del.className='btn small'; del.textContent='Delete';
+        del.onclick = async () => {
+          try{
+            await deleteFile(item.id);
+            renderList();
+          }catch(err){
+            alert('Failed to delete file: ' + err.message);
+          }
+        };
+
+        actions.appendChild(dl); actions.appendChild(moveBtn); actions.appendChild(del);
+
+        div.appendChild(preview);
+        div.appendChild(meta);
+        div.appendChild(actions);
+        list.appendChild(div);
+      });
+    }
+
+    function updateSummary(items){
+      const s = document.getElementById('summary');
+      if(!items || items.length === 0){ s.textContent = 'No files stored.'; return; }
+
+      const summary = { images: {count:0,size:0}, audio:{count:0,size:0}, video:{count:0,size:0}, documents:{count:0,size:0}, others:{count:0,size:0} };
+
+      items.forEach(it => {
+        const t = (it.type||'').toLowerCase();
+        if(t.startsWith('image/')){ summary.images.count++; summary.images.size += it.size; }
+        else if(t.startsWith('audio/')){ summary.audio.count++; summary.audio.size += it.size; }
+        else if(t.startsWith('video/')){ summary.video.count++; summary.video.size += it.size; }
+        else if(t === 'application/pdf' || t.includes('word') || t.includes('officedocument') || t === 'text/plain' || it.name.match(/\.(pdf|docx?|txt|xlsx?|pptx?)$/i)){
+          summary.documents.count++; summary.documents.size += it.size;
+        } else { summary.others.count++; summary.others.size += it.size; }
+      });
+
+      const parts = [];
+      if(summary.images.count) parts.push(`Images: ${summary.images.count} (${formatBytes(summary.images.size)})`);
+      if(summary.audio.count) parts.push(`Audio: ${summary.audio.count} (${formatBytes(summary.audio.size)})`);
+      if(summary.video.count) parts.push(`Video: ${summary.video.count} (${formatBytes(summary.video.size)})`);
+      if(summary.documents.count) parts.push(`Documents: ${summary.documents.count} (${formatBytes(summary.documents.size)})`);
+      if(summary.others.count) parts.push(`Other: ${summary.others.count} (${formatBytes(summary.others.size)})`);
+
+      s.textContent = parts.join('  |  ');
+    }
+
+    // Folders UI
+    async function renderTypeFilters(){
+      const container = document.getElementById('typeFilterList');
+      const filters = [
+        {id:'all', label:'All Files'},
+        {id:'images', label:'Images'},
+        {id:'audio', label:'Audio'},
+        {id:'video', label:'Video'},
+        {id:'documents', label:'Documents'},
+        {id:'others', label:'Other'}
+      ];
+      container.innerHTML = '';
+      filters.forEach(filter => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-item' + (selectedTypeFilter === filter.id ? ' selected' : '');
+        button.textContent = filter.label;
+        button.onclick = () => {
+          selectedTypeFilter = filter.id;
+          renderTypeFilters();
+          renderList();
+        };
+        container.appendChild(button);
+      });
+    }
+
+    async function renderFolders(){
+      const container = document.getElementById('folderListUI');
+      const folders = await getAllFolders();
+      container.innerHTML = '';
+      const allItem = document.createElement('div'); allItem.className = 'folder-item'; allItem.dataset.id = 'all'; allItem.textContent = 'All Files';
+      const allBtn = document.createElement('button'); allBtn.className='btn small'; allBtn.textContent='Select'; allBtn.onclick = ()=>{ selectedFolderId='all'; highlightFolder('all'); renderList(); };
+      allItem.appendChild(allBtn);
+      container.appendChild(allItem);
+
+      folders.forEach(f => {
+        const el = document.createElement('div'); el.className='folder-item'; el.dataset.id = f.id;
+        const span = document.createElement('div'); span.textContent = f.name;
+        const right = document.createElement('div');
+        const sel = document.createElement('button'); sel.className='btn small'; sel.textContent='Open'; sel.onclick = ()=>{ selectedFolderId = f.id; highlightFolder(f.id); renderList(); };
+        const del = document.createElement('button'); del.className='btn small'; del.textContent='Del'; del.onclick = async ()=>{
+          if(!confirm('Delete folder "'+f.name+'" and all its files?')) return;
+          try{
+            await deleteFilesInFolder(f.id);
+            await deleteFolder(f.id);
+            if(String(selectedFolderId)===String(f.id)) selectedFolderId='all';
+            renderFolders(); renderList();
+          }catch(err){
+            alert('Failed to delete folder files: ' + err.message);
+          }
+        };
+        right.appendChild(sel); right.appendChild(del);
+        el.appendChild(span); el.appendChild(right);
+        container.appendChild(el);
+      });
+      highlightFolder(selectedFolderId || 'all');
+    }
+
+    function highlightFolder(id){
+      const nodes = document.querySelectorAll('#folderListUI .folder-item');
+      nodes.forEach(n=>{ if(String(n.dataset.id)===String(id)) n.classList.add('selected'); else n.classList.remove('selected'); });
+    }
+
+    function formatBytes(n){ if(n===0) return '0 B'; const e = Math.floor(Math.log(n)/Math.log(1024)); return (n/Math.pow(1024,e)).toFixed(2)+' '+['B','KB','MB','GB'][e]; }
+
+    // Upload type management (persisted as single selection)
+    const DEFAULT_UPLOAD_TYPE = 'all';
+    function loadUploadType(){ return localStorage.getItem('uploadType') || DEFAULT_UPLOAD_TYPE; }
+    function saveUploadType(type){ localStorage.setItem('uploadType', type); }
+    function updateAcceptInput(){
+      const type = loadUploadType();
+      let parts = [];
+      if(type === 'images') parts = ['image/*'];
+      else if(type === 'audio') parts = ['audio/*'];
+      else if(type === 'video') parts = ['video/*'];
+      else if(type === 'documents') parts = ['.pdf,.doc,.docx,.txt,application/pdf,text/plain,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      else if(type === 'others') parts = [];
+      document.getElementById('fileInput').accept = parts.join(',');
+    }
+    function applyRadios(){
+      const type = loadUploadType();
+      document.querySelectorAll('input[name="uploadType"]').forEach(radio => {
+        radio.checked = radio.value === type;
+      });
+    }
+
+    function isAllowed(file){
+      const type = loadUploadType();
+      const t = (file.type||'').toLowerCase();
+      if(type === 'all') return true;
+      if(type === 'images') return t.startsWith('image/');
+      if(type === 'audio') return t.startsWith('audio/');
+      if(type === 'video') return t.startsWith('video/');
+      if(type === 'documents') return t === 'application/pdf' || t.includes('word') || t.includes('officedocument') || t === 'text/plain' || file.name.match(/\.(pdf|docx?|txt|xlsx?|pptx?)$/i);
+      if(type === 'others') return !(t.startsWith('image/') || t.startsWith('audio/') || t.startsWith('video/') || t === 'application/pdf' || t.includes('word') || t.includes('officedocument') || t === 'text/plain' || file.name.match(/\.(pdf|docx?|txt|xlsx?|pptx?)$/i));
+      return true;
+    }
+
+    // initialize radio buttons and accept
+    applyRadios(); updateAcceptInput();
+
+    document.querySelectorAll('input[name="uploadType"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        if(!radio.checked) return;
+        saveUploadType(radio.value);
+        updateAcceptInput();
+      });
+    });
+
+    // Wire up events
+    const uploadZone = document.getElementById('uploadZone');
+
+    async function handleFiles(files){
+      const allowed = [];
+      const skippedNames = [];
+      for(const f of files){ if(isAllowed(f)) allowed.push(f); else skippedNames.push(f.name); }
+      try{
+        for(const f of allowed){ await addFile(f); }
+      }catch(err){
+        alert('Upload failed: ' + err.message);
+      }
+      if(skippedNames.length) alert(skippedNames.length + ' file(s) skipped due to your selected allowed types.');
+      await renderList();
+    }
+
+    function setDropState(active){
+      uploadZone.classList.toggle('dragover', active);
+    }
+
+    uploadZone.addEventListener('click', () => document.getElementById('fileInput').click());
+    uploadZone.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.getElementById('fileInput').click(); }
+    });
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); setDropState(true); });
+    uploadZone.addEventListener('dragleave', () => setDropState(false));
+    uploadZone.addEventListener('drop', async (e) => {
+      e.preventDefault(); setDropState(false);
+      const files = Array.from(e.dataTransfer.files || []);
+      if(files.length === 0) return;
+      await handleFiles(files);
+    });
+
+    document.getElementById('fileInput').addEventListener('change', async function(e){
+      const files = Array.from(e.target.files || []);
+      if(files.length === 0) return;
+      await handleFiles(files);
+      e.target.value = ''; 
+    });
+
+    document.getElementById('clearAll').addEventListener('click', async ()=>{
+      if(!confirm('Remove all stored files?')) return;
+      try{
+        await clearAll();
+        renderList();
+      }catch(err){
+        alert('Failed to clear stored files: ' + err.message);
+      }
+    });
+
+    document.getElementById('createFolder').addEventListener('click', async ()=>{
+      const name = (document.getElementById('newFolderName').value || '').trim();
+      if(!name){ alert('Enter a folder name'); return; }
+      await addFolder(name);
+      document.getElementById('newFolderName').value = '';
+      await renderFolders();
+    });
+
+
+    // Init
+    (async function(){
+      try{ await openDB(); await migrateLegacyFiles(); await renderTypeFilters(); await renderFolders(); await renderList(); }catch(err){ console.error('Storage initialization error', err); document.getElementById('fileList').textContent = 'Failed to restore storage: ' + err.message; }
+    })();
+  </script>
+</body>
+</html>
